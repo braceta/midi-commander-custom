@@ -73,6 +73,10 @@ void Error(char *msg);
 #define LED_D_GPIO_Port GPIOA
 #define SW_E_Pin GPIO_PIN_6
 #define SW_E_GPIO_Port GPIOA
+#define Exp_Pedal_1_Pin GPIO_PIN_7
+#define Exp_Pedal_1_GPIO_Port GPIOA
+#define Exp_Pedal_2_Pin GPIO_PIN_0
+#define Exp_Pedal_2_GPIO_Port GPIOB
 #define LED_E_Pin GPIO_PIN_1
 #define LED_E_GPIO_Port GPIOB
 #define LED_5_Pin GPIO_PIN_2
@@ -101,6 +105,7 @@ void Error(char *msg);
 #define LED_A_GPIO_Port GPIOB
 #define SW_A_Pin GPIO_PIN_5
 #define SW_A_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 #define FIRMWARE_VERSION	"0.1A"
@@ -112,5 +117,3 @@ void Error(char *msg);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

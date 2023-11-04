@@ -237,6 +237,55 @@ int8_t midiCmd_send_note_command_from_rom(uint8_t *pRom, uint8_t on_off){
 	return 0;
 }
 
+int8_t midiCmd_send_cc_command(uint16_t adcValue) {
+
+	__disable_irq();
+	int8_t buffer_no = get_next_available_tx_buffer();
+	if (buffer_no < 0) {
+		__enable_irq();
+		return ERROR_BUFFERS_FULL;
+	}
+
+	uint8_t *serialBuf = &(midi_uart_out_buffer[buffer_no][0]);
+	uint8_t *usbBuf = midi_usb_assembly_buffer;
+
+	uint8_t cc_number = 69; // CC Number
+	uint8_t cc_value = adcValue & 0x7F; // Value
+
+	*(usbBuf++) = CIN_CONTROL_CHANGE;
+	*(usbBuf++) = 0xB0 | (7 & 0xF); // CC and Channel
+	*(usbBuf++) = cc_number;
+	*(usbBuf++) = cc_value;
+
+	memcpy(serialBuf, (usbBuf - 3), 3);
+	serialBuf += 3;
+
+	midi_uart_out_buffer_bytes_to_tx[buffer_no] = serialBuf
+			- &midi_uart_out_buffer[buffer_no][0];
+
+	__enable_irq();
+
+	uint8_t usb_bytes_to_tx = usbBuf - midi_usb_assembly_buffer;
+	MIDI_DataTx(midi_usb_assembly_buffer, usb_bytes_to_tx);
+
+	midi_serial_transmit();
+
+	/*
+	 * Displaying messages on screen likely involves a delay which can be
+	 * detrimental on the timing of MIDI messages. So keep this commented and
+	 * only use for debugging. Using the display here also hides issues with
+	 * the serial transmission buffers. The delay in the display update allows
+	 * serial transmission to finish before the next time we enter this function.
+	 * So we never use multiple buffers at the same time and this can hide issues.
+	 */
+	//	ssd1306_SetCursor(2, 10);
+	//	char msg[25];
+	//	sprintf(msg, "CC %d = %d", cc_number, cc_value);
+	//	ssd1306_WriteString(msg, Font_6x8, White);
+	//	ssd1306_UpdateScreen();
+	return 0;
+}
+
 int8_t midiCmd_send_cc_command_from_rom(uint8_t *pRom, uint8_t on_off){
 	// Check switch off value is valid, else no off value will be sent
 	if(!on_off){

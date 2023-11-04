@@ -9,6 +9,7 @@
 #include "midi_cmds.h"
 #include "flash_midi_settings.h"
 #include "display.h"
+#include <stdlib.h>
 
 /*
  * Creating some constant arrays for the switches that can be scanned and handled
@@ -43,6 +44,8 @@ volatile uint16_t port_C_switches_changed = 0;
 volatile uint8_t debounce_counter = 0;
 
 extern uint8_t f_sys_config_complete;
+
+volatile uint16_t prevAdcValue1 = 0;
 
 uint8_t switch_current_page = 0;
 
@@ -299,6 +302,21 @@ void update_leds_on_bank_change(void){
 			set_led(i,RESET);
 		}
 	}
+}
+
+
+
+
+void handle_exp_pedals(uint16_t adcValue1) {
+	uint16_t boxedValue = getAdcValueInInterval(adcValue1, 127);
+	int delta = abs(prevAdcValue1 - boxedValue);
+	if(boxedValue > 0 && delta >= 3){
+		prevAdcValue1 = boxedValue;
+
+	}
+
+	midiCmd_send_cc_command(boxedValue);
+	display_exp_pedals(boxedValue, boxedValue);
 }
 
 void handle_switches(void){

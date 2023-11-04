@@ -272,5 +272,3 @@ void HalfTransfer_CallBack_FS(void)
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

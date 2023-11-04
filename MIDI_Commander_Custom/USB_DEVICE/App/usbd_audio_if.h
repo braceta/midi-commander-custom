@@ -136,5 +136,3 @@ void HalfTransfer_CallBack_FS(void);
 #endif
 
 #endif /* __USBD_AUDIO_IF_H__ */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
