@@ -46,6 +46,7 @@ volatile uint8_t debounce_counter = 0;
 extern uint8_t f_sys_config_complete;
 
 volatile uint16_t prevAdcValue1 = 0;
+volatile uint16_t prevAdcValue2 = 0;
 
 uint8_t switch_current_page = 0;
 
@@ -307,16 +308,38 @@ void update_leds_on_bank_change(void){
 
 
 
-void handle_exp_pedals(uint16_t adcValue1) {
-	uint16_t boxedValue = getAdcValueInInterval(adcValue1, 127);
-	int delta = abs(prevAdcValue1 - boxedValue);
-	if(boxedValue > 0 && delta >= 3){
-		prevAdcValue1 = boxedValue;
-
+void handle_exp_pedals(uint16_t adcValue1, uint16_t adcValue2) {
+//	uint16_t boxedValue2 = getAdcValueInInterval(adcValue2, 127);
+	if(prevAdcValue1 == 0){
+		prevAdcValue1 = adcValue1;
 	}
 
-	midiCmd_send_cc_command(boxedValue);
-	display_exp_pedals(boxedValue, boxedValue);
+	if(prevAdcValue2 == 0){
+		prevAdcValue2 = adcValue2;
+	}
+
+	if(adcValue1 > 4000) {
+		prevAdcValue1 = 4095;
+	}
+
+	if(adcValue2 > 4000) {
+		prevAdcValue2 = 4095;
+	}
+
+	uint16_t delta1 = abs(prevAdcValue1 - adcValue1);
+	uint16_t delta2 = abs(prevAdcValue2 - adcValue2);
+
+	if(adcValue1 > 0 && delta1 >= 64){
+		prevAdcValue1 = adcValue1;
+		uint16_t boxedValue1 = getAdcValueInInterval(prevAdcValue1, 127);
+		midiCmd_send_cc_command(boxedValue1);
+		display_exp_pedals(prevAdcValue1, prevAdcValue2);
+	}
+	if(adcValue2 > 0 && delta2 >= 45){
+		prevAdcValue2 = adcValue2;
+	}
+
+
 }
 
 void handle_switches(void){

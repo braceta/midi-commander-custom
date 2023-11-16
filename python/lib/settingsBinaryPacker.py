@@ -27,7 +27,7 @@ def pack_bank_strings(df):
             large_name = ""
         if small_name == "nan":
             small_name = ""
-        bin_list += ("{:4.4}".format(large_name)).encode("ASCII")
-        bin_list += ("{:8.8}".format(small_name)).encode("ASCII")
+        bin_list += ("{:8.8}".format(large_name)).encode("ASCII")
+        bin_list += ("{:16.16}".format(small_name)).encode("ASCII")
 
     return bin_list

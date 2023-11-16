@@ -14,9 +14,14 @@
 
 #define FLASH_SETTINGS_NO_PAGES	(3)
 
+#define BANK_NAME_LARGE_SIZE = 8
+#define BANK_INFO_SMALL_SIZE = 16
+#define NUMBER_OF_BANKS = 8
+#define BANKS_SIZE_TOTAL = NUMBER_OF_BANKS * (BANK_NAME_LARGE_SIZE+BANK_INFO_SMALL_SIZE)
+
 uint8_t *pGlobalSettings = (uint8_t*)FLASH_SETTINGS_START;
 uint8_t *pBankStrings = (uint8_t*)FLASH_SETTINGS_START+32;
-uint8_t *pSwitchCmds = (uint8_t*)FLASH_SETTINGS_START+32+96;
+uint8_t *pSwitchCmds = (uint8_t*) FLASH_SETTINGS_START+32+192; // 192 is BANKS_SIZE_TOTAL
 
 
 void flash_settings_erase(void){
